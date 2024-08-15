@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+  schemas   = ["public", "auth"]
+}
+
+model Bug {
+  id              Int           @id(map: "bugs_table_pkey") @default(autoincrement())
+  assignee        Int?
+  organization_id Int
+  title           String
+  description     String
+  priority        Priority       @default(small)
+  status          Status       @default(open)
+  user_id         String?
+  email           String?
+  user            Profile?         @relation(fields: [assignee], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "bugs_assignee_profiles_id_fk")
+  organization    Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "bugs_organization_id_organizations_id_fk")
+
+  @@map("bugs")
+  @@schema("public")
+}
+
+model Organization {
+  id      Int     @id(map: "organizations_table_pkey") @default(autoincrement())
+  name    String
+  plan_id Int     @default(autoincrement())
+  bugs    Bug[]
+  plan   Plan   @relation(fields: [plan_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "organizations_plan_id_plans_id_fk")
+  users   Profile[]
+
+  @@map("organizations")
+  @@schema("public")
+}
+
+model Plan {
+  id            Int             @id(map: "plans_table_pkey") @default(autoincrement())
+  name          String
+  price         Decimal         @db.Decimal
+  description   String
+  organizations Organization[]
+
+  @@map("plans")
+  @@schema("public")
+}
+
+model Profile {
+  id              Int           @id(map: "profiles_table_pkey") @default(autoincrement())
+  name            String
+  email           String        @unique(map: "profiles_email_unique")
+  organization_id Int
+  bugs            Bug[]
+  organization    Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "profiles_organization_id_organizations_id_fk")
+
+  @@map("profiles")
+  @@schema("public")
+}
+
+enum Priority {
+  critical
+  major
+  medium
+  small
+
+  @@schema("public")
+}
+
+enum Status {
+  open
+  in_progress
+  resolved
+  closed
+
+  @@schema("public")
+}
+
+enum Role {
+  admin
+  user
+
+  @@schema("public")
+}
