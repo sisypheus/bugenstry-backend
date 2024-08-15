@@ -6,4 +6,8 @@ const router = Router();
 
 router.get('/', UsersHandlers.findAll);
 
+router.post('/', UsersHandlers.create);
+
+router.post('/google', UsersHandlers.createGoogle);
+
 export default router;

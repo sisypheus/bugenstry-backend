@@ -6,22 +6,16 @@ require('dotenv').config();
 
 import * as middlewares from './middlewares';
 import api from './api';
-import MessageResponse from './interfaces/MessageResponse';
-import { prisma } from './db/prisma';
 
 const app = express();
 
+app.use(express.urlencoded({ extended: true }));
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
-app.get<{}, MessageResponse>('/', (req, res) => {
-  prisma.bug.findMany().then((bugs: any) => {
-    res.json(bugs);
-  });
-  // res.json({
-  //   message: 'hi',
-  // });
+app.get<{}, String>('/', (req, res) => {
+  res.json("API - 👋🌎🌍🌏");
 });
 
 app.use('/api/v1', api);
