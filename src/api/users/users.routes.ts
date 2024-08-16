@@ -6,8 +6,11 @@ const router = Router();
 
 router.get('/', UsersHandlers.findAll);
 
-router.post('/', UsersHandlers.create);
+router.post('/signin', UsersHandlers.emailSignIn);
 
-router.post('/google', UsersHandlers.createGoogle);
+router.post('/signup', UsersHandlers.emailSignUp);
+
+router.get('/google', UsersHandlers.googleSignIn);
+router.get('/google/callback', UsersHandlers.googleCallback);
 
 export default router;
