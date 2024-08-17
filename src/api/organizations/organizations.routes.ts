@@ -6,4 +6,6 @@ const router = Router();
 
 router.get('/', OrganizationsHandlers.findAll);
 
+router.post('/', OrganizationsHandlers.create);
+
 export default router;

@@ -1,3 +1,4 @@
+import jwt from 'jsonwebtoken';
 import { NextFunction, Request, Response } from 'express';
 import { ZodError } from 'zod';
 
@@ -41,3 +42,18 @@ export function errorHandler(err: Error, req: Request, res: Response<ErrorRespon
     stack: process.env.NODE_ENV === 'production' ? '🥞' : err.stack,
   });
 }
+
+export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
+  const token = req.headers['authorization'];
+
+  if (!token) return res.sendStatus(401);
+
+  jwt.verify(token, process.env.JWT_SECRET!, (err, user) => {
+    if (err)
+      return res.sendStatus(403);
+
+    (req as any).user = user;
+
+    next();
+  });
+};
