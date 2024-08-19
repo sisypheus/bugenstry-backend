@@ -8,7 +8,7 @@ export async function findAll(req: Request, res: Response<any>, next: NextFuncti
   return res.json(prisma.organization.findMany());
 }
 
-export async function create(req: RequestWithUser, res: Response<any>, next: NextFunction) {
+export async function create(req: Request, res: Response<any>, next: NextFunction) {
   let { name, plan_id } = req.body;
 
   // set the admin user to the current user
@@ -22,7 +22,9 @@ export async function create(req: RequestWithUser, res: Response<any>, next: Nex
     },
   });
 
-  const admin = await setAdmin(req.user.id, organization.id);
+  const admin = await setAdmin((req as RequestWithUser).user.id, organization.id);
+
+  return res.json({ organization, admin });
 }
 
 const setAdmin = async (user_id: string, organization_id: string) => {

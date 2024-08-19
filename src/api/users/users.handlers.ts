@@ -46,7 +46,6 @@ export async function emailSignIn(req: Request, res: Response<any>, next: NextFu
       password,
     });
 
-
     if (error)
       return res.status(401).json({ error: error.message });
 
@@ -89,6 +88,21 @@ export async function googleCallback(req: Request, res: Response<any>, next: Nex
     const token = signToken(data);
 
     res.json({ token });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getProfile(req: Request, res: Response<any>, next: NextFunction) {
+  try {
+    const token = req.headers['authorization'];
+
+    if (!token)
+      return res.sendStatus(401);
+
+    const user = verifyToken(token);
+
+    res.json(user);
   } catch (error) {
     next(error);
   }

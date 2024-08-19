@@ -41,7 +41,7 @@ model Organization {
 }
 
 model Plan {
-  id            Int            @id(map: "plans_table_pkey") @default(autoincrement())
+  id            Int            @id() @default(autoincrement())
   name          String
   price         Decimal        @db.Decimal
   description   String
@@ -52,7 +52,8 @@ model Plan {
 }
 
 model Profile {
-  id              String        @id(map: "profiles_table_pkey") @default(uuid())
+  id              String        @id @default(uuid())
+  user_id         String        @unique
   name            String
   email           String        @unique(map: "profiles_email_unique")
   organization_id String?
